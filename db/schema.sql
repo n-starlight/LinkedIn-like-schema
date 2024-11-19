@@ -8,17 +8,19 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users(
 user_id BIGSERIAL PRIMARY KEY,
 name VARCHAR(100) NOT NULL,
+last_name VARCHAR(100) NOT NULL,
+signup_email VARCHAR(120) UNIQUE NOT NULL,
 headline VARCHAR(300) NOT NULL,
 summary TEXT,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
--- update functionality can be added in backend
+-- update functionality can be added via  trigger or in backend
 deleted_at TIMESTAMP DEFAULT NULL --NULL means account is active
 --(for soft deletes if user wants to hibernate their account 
 -- and to allow for recovery time period if requested for deletion)
 )
-ALTER TABLE users
-ADD COLUMN last_name VARCHAR(100) NOT NULL ;
+-- ALTER TABLE users
+-- ADD COLUMN last_name VARCHAR(100) NOT NULL ;
 
 
 DROP TABLE IF EXISTS education;
@@ -40,14 +42,14 @@ FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE
 DROP TABLE IF EXISTS contact_info;
 CREATE TABLE contact_info(
 contact_id BIGSERIAL PRIMARY KEY,
-user_id BIGINT REFERENCES users(user_id) ON DELETE CASCADE,
+user_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
 email VARCHAR(50) UNIQUE NOT NULL,
 phone_no VARCHAR(15),
 address VARCHAR(70),
 website VARCHAR(100)
 );
-ALTER TABLE contact_info
-ALTER COLUMN user_id SET NOT NULL; 
+-- ALTER TABLE contact_info
+-- ALTER COLUMN user_id SET NOT NULL; 
 
 
 ---skills table was not used
@@ -94,11 +96,12 @@ position_id SERIAL PRIMARY KEY,
 experience_id BIGINT NOT NULL REFERENCES experiences(experience_id) ON DELETE CASCADE,
 role VARCHAR(100) NOT NULL,
 role_location role_location DEFAULT 'Office' ,
+role_desc VARCHAR(1500),
 start_date DATE NOT NULL,
 end_date DATE
 );
-ALTER TABLE positions
-ADD COLUMN role_desc VARCHAR(1500);
+-- ALTER TABLE positions
+-- ADD COLUMN role_desc VARCHAR(1500);
 
 DROP TYPE IF EXISTS conn_status;
 CREATE TYPE conn_status AS ENUM ('accepted','pending','withdrawn','rejected');
@@ -149,13 +152,15 @@ post_id BIGINT NOT NULL REFERENCES posts(post_id) ON DELETE CASCADE,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
----- unique constraint for connections and followers 
+---- unique constraint for combinations of foreign keys
 ALTER TABLE connections
 ADD CONSTRAINT unique_sender_receiver UNIQUE(sender_id,receiver_id);
 ALTER TABLE follows
 ADD CONSTRAINT unique_follower_followed UNIQUE(follower_id,followed_id);
 ALTER TABLE experiences
 ADD CONSTRAINT unique_user_company UNIQUE(user_id,company_id);
+ALTER TABLE likes
+ADD CONSTRAINT unique_post_userlike UNIQUE(user_id,post_id);
 
 ---- creating indexes on foreign keys
 CREATE INDEX IF NOT EXISTS idx_education_user_id ON education(user_id);

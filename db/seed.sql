@@ -3,29 +3,29 @@
 ---> have used ON CONFLICT(unique_field) DO NOTHING
 ---> and fetched ids for foreign key references dynamically except for posts and comments .
 
-INSERT INTO users(name,last_name,headline,summary)
+INSERT INTO users(name,last_name,headline,summary,signup_email)
 VALUES
-('Nisha','.','.',NULL),
-('Khushboo','Choudhary',NULL,NULL),
-('Shivika', 'Lamba',NULL,NULL),
-('Kanchan','Rajput','Software Enginner II @ Parker Digital',NULL);
+('Nisha','.','.',NULL,'nysssachoudhary@gmail.com'),
+('Khushboo','Choudhary',NULL,NULL,'khushboochoudhary@gmail.com'),
+('Shivika', 'Lamba',NULL,NULL,'shivikal@gmail.com'),
+('Kanchan','Rajput','Software Enginner II @ Parker Digital',NULL,'kanchanrajput@gmail.com');
 
 
 INSERT INTO education(user_id,school,degree,field_of_study,start_date,end_date,grade,activities)
 VALUES
-((SELECT user_id FROM users WHERE name = 'Nisha' AND last_name = '.'),'Vidyashram Public School,Pilani','6th-10th grades',NULL,NULL,NULL,'86%(10th)',
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com'),'Vidyashram Public School,Pilani','6th-10th grades',NULL,NULL,NULL,'86%(10th)',
 'Martial Arts, 
 Athletics(Long Distance & Sprint Running, Long and high Jumps, Hurdles Running, Calisthenics ...), 
 Gully Football, Gully Cricket'),
-((SELECT user_id FROM users WHERE name = 'Nisha' AND last_name = '.'),'Birla Balika Vidyapeeth, Pilani','12th Grade(BSV)(CBSE)','Physics, Mathematics, Chemistry',
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),'Birla Balika Vidyapeeth, Pilani','12th Grade(BSV)(CBSE)','Physics, Mathematics, Chemistry',
 '2014-06-01','2015-05-30','94%',NULL);
 
 INSERT INTO contact_info(user_id,email,phone_no,address,website)
 VALUES
-((SELECT user_id FROM users WHERE name = 'Nisha' AND last_name = '.'),'playg1288@gmail.com','8114450120','Rajasthan',NULL)
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com'),'playg1288@gmail.com','8114450120','Rajasthan',NULL)
 ON CONFLICT(email) DO NOTHING ;
 
-WITH (SELECT user_id FROM users WHERE name = 'Nisha' AND last_name = '.') AS curr_user 
+WITH (SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com') AS curr_user 
 INSERT INTO user_skills(user_id,skills_name)
 VALUES
 (curr_user.user_id,'Machine Learning'),(curr_user.user_id,'Python'),(curr_user.user_id,'DSA'),(curr_user.user_id,'Martial Arts'),
@@ -45,9 +45,9 @@ ON CONFLICT(comp_name) DO NOTHING ;
 
 INSERT INTO experiences(user_id,company_id)
 VALUES
-((SELECT user_id FROM users WHERE name = 'Nisha' AND last_name = '.'),(SELECT company_id FROM companies WHERE comp_name = 'Polymerize')),
-((SELECT user_id FROM users WHERE name = 'Nisha' AND last_name = '.'),(SELECT company_id FROM companies WHERE comp_name = 'Amazon')),
-((SELECT user_id FROM users WHERE name = 'Nisha' AND last_name = '.'),(SELECT company_id FROM companies WHERE comp_name = 'Spartificial'))
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT company_id FROM companies WHERE comp_name = 'Polymerize')),
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT company_id FROM companies WHERE comp_name = 'Amazon')),
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT company_id FROM companies WHERE comp_name = 'Spartificial'))
 ON CONFLICT(user_id,company_id) DO NOTHING ;
 
 
@@ -69,9 +69,9 @@ Precision ,Recall results for this architecture --- train_precision--0.9887 ,tra
 
 INSERT INTO connections(sender_id,receiver_id,status)
 VALUES
-((SELECT user_id FROM users WHERE name = 'Nisha' AND last_name = '.'),(SELECT user_id FROM users WHERE name = 'Khushboo' AND last_name = 'Choudhary'),'accepted'),
-((SELECT user_id FROM users WHERE name = 'Nisha' AND last_name = '.'),(SELECT user_id FROM users WHERE name = 'Shivika' AND last_name = 'Lamba'),'accepted'),
-((SELECT user_id FROM users WHERE name = 'Nisha' AND last_name = '.'),(SELECT user_id FROM users WHERE name = 'Kanchan' AND last_name = 'Rajput'),'accepted');
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT user_id FROM users WHERE signup_email = 'khushboochoudhary@gmail.com' ),'accepted'),
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT user_id FROM users WHERE signup_email = 'shivikal@gmail.com' ),'accepted'),
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT user_id FROM users WHERE signup_email = 'kanchanrajput@gmail.com' ),'accepted');
 ON CONFLICT(sender_id,receiver_id) DO NOTHING ;
 
 
@@ -89,7 +89,7 @@ ON CONFLICT(follower_id,followed_id) DO NOTHING ;
 
 INSERT INTO posts (user_id,content)
 VALUES
-((SELECT user_id FROM users WHERE name = 'Khushboo' AND last_name = 'Choudhary'),'I''m thrilled to share that I have successfully completed my summer internship at Synchrony as a Machine Learning Intern!
+((SELECT user_id FROM users WHERE signup_email = 'khushboochoudhary@gmail.com' ),'I''m thrilled to share that I have successfully completed my summer internship at Synchrony as a Machine Learning Intern!
 
 During my time at this innovative fintech company, I had the incredible opportunity to network with other interns, diving deep into cutting-edge technologies like PySpark, Hive, and cloud infrastructure. My work focused on optimizing complex machine-learning models, which was both challenging and rewarding.
 
@@ -98,7 +98,7 @@ A highlight of my internship was emerging as one of the top 3 finalists in the B
 None of this would have been possible without the unwavering support of my colleagues at Synchrony. I''m especially grateful to my assignment leader, Lian Wang and my mentor, Joe Lotti for their guidance. A special shoutout to Karin Dor Markovich for her continued support throughout my journey and making it an equally enjoyable experience.
 
 I''m also excited to share that I''ll be continuing with Synchrony as a Co-op Intern this fall. I’m looking forward to even more learning and new experiences ahead!'),
-((SELECT user_id FROM users WHERE name = 'Shivika' AND last_name = 'Lamba'),
+((SELECT user_id FROM users WHERE signup_email = 'shivikal@gmail.com' ),
 'I''m thrilled to share that I''ve completed my MSc in Astrophysics from Cardiff University (awaiting thesis results). My MSc thesis, titled "Evolution of Binary Black Hole in the Presence of a Supermassive Black Hole", explores the dynamics of hierarchical triple systems and how supermassive black holes influence binary black hole mergers.
 
 Prior to this, I earned my B.Tech in Aerospace Engineering from Ramaiah University of Applied Sciences. My B.Tech thesis focused on "CFD and Thermal Analysis of the Orion Re-entry Capsule," where I used Ansys Fluent and Ansys Steady State Thermal to analyze flow patterns and thermal effects during the spacecraft''s re-entry into Earth''s atmosphere.
