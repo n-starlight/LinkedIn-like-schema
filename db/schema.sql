@@ -1,6 +1,8 @@
 ---All the ALTER commands are executed before data insertion
 ---Haven't use ON CASCADE DELETE FOR posts as they will be deleted before user_deletion in batches in backend logic .
 
+--To ensure no errors of unique constraint violations AND no nuplicate data insertions while running the script again and again
+--that is to ensure idempotency .
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users(
