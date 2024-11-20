@@ -1,4 +1,4 @@
---Schema and initial data insertion seeding follows idempotency 
+--Creating Schema and initial data insertion follows idempotency 
 --To ensure no errors of unique constraint violations AND no nuplicate data insertions while running the script again and again
 
 INSERT INTO users(name,last_name,headline,summary,signup_email)
@@ -17,21 +17,22 @@ VALUES
 Athletics(Long Distance & Sprint Running, Long and high Jumps, Hurdles Running, Calisthenics ...), 
 Gully Football, Gully Cricket'),
 ((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),'Birla Balika Vidyapeeth, Pilani','12th Grade(BSV)(CBSE)','Physics, Mathematics, Chemistry',
-'2014-06-01','2015-05-30','94%',NULL);
+'2014-06-01','2015-05-30','94%',NULL)
+ON CONFLICT ON CONSTRAINT unique_school_degree DO NOTHING ;
 
 INSERT INTO contact_info(user_id,email,phone_no,address,website)
 VALUES
 ((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com'),'playg1288@gmail.com','8114450120','Rajasthan',NULL)
 ON CONFLICT(email) DO NOTHING ;
 
-WITH (SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com') AS curr_user 
 INSERT INTO user_skills(user_id,skills_name)
-VALUES
-(curr_user.user_id,'Machine Learning'),(curr_user.user_id,'Python'),(curr_user.user_id,'DSA'),(curr_user.user_id,'Martial Arts'),
-(curr_user.user_id,'Exploratory Data Analysis'),(curr_user.user_id,'Tableau'),(curr_user.user_id,'Power BI'),(curr_user.user_id,'Javascript'),
-(curr_user.user_id,'SQL'),(curr_user.user_id,'Linear Algebra'),(curr_user.user_id,'Atheletics'),(curr_user.user_id,'Football'),
-(curr_user.user_id,'Numpy'),(curr_user.user_id,'Matplotlib'),(curr_user.user_id,'Statistics'),(curr_user.user_id,'Web Development');
-ON CONFLICT(skills_name) DO NOTHING ;
+SELECT (SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com'),unnest(ARRAY[
+        'Machine Learning', 'Python', 'DSA', 'Martial Arts',
+        'Exploratory Data Analysis', 'Tableau', 'Power BI', 'Javascript',
+        'SQL', 'Linear Algebra', 'Atheletics', 'Football',
+        'Numpy', 'Matplotlib', 'Statistics', 'Web Development'
+    ])
+ON CONFLICT (skills_name) DO NOTHING;
 
 
 INSERT INTO companies (comp_name,comp_location)
@@ -44,18 +45,21 @@ ON CONFLICT(comp_name) DO NOTHING ;
 
 INSERT INTO experiences(user_id,company_id)
 VALUES
-((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT company_id FROM companies WHERE comp_name = 'Polymerize')),
-((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT company_id FROM companies WHERE comp_name = 'Amazon')),
-((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT company_id FROM companies WHERE comp_name = 'Spartificial'))
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT comp_id FROM companies WHERE comp_name = 'Polymerize')),
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT comp_id FROM companies WHERE comp_name = 'Amazon')),
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT comp_id FROM companies WHERE comp_name = 'Spartificial'))
 ON CONFLICT(user_id,company_id) DO NOTHING ;
 
 
 INSERT INTO positions(experience_id,role,role_location,start_date,end_date,role_desc)
 VALUES
-((SELECT company_id FROM companies WHERE comp_name = 'Polymerize'),'Frontend Engineer','Remote','2022-09-01','2022-09-16',
+((SELECT experience_id FROM experiences WHERE company_id=(SELECT comp_id FROM companies WHERE comp_name = 'Polymerize') ),
+'Frontend Engineer','Remote','2022-09-01','2022-09-16',
 'Couldnt continue due to family concerns and health issues'),
-((SELECT company_id FROM companies WHERE comp_name = 'Amazon'),'Logistics Associate','Remote','2023-10-01','2024-08-30',NULL),
-((SELECT company_id FROM companies WHERE comp_name = 'Spartificial'),'ML Intern','Remote','2023-08-01','2022-10-10',
+((SELECT experience_id FROM experiences WHERE company_id=(SELECT comp_id FROM companies WHERE comp_name = 'Amazon')),
+'Logistics Associate','Remote','2023-10-01','2024-08-30',NULL),
+((SELECT experience_id FROM experiences WHERE company_id=(SELECT comp_id FROM companies WHERE comp_name = 'Spartificial')),
+'ML Intern','Remote','2023-08-01','2022-10-10',
 '•Supervised Multilabel,multi class image  classification of different protein locations using images of different morphology cells with the location of protein relative to cellular structure per sample on human protein atlas dataset.
 •Improved model performance metrics like precision, recall etc. by exploring and selecting good data augmentation .Train recall improved  by approx 12% and precision by approx 3.5% ,validation precision by 2.3%, recall by approx 2.4%. 
 •Explored various state of art models and their workings.
@@ -64,13 +68,13 @@ Precision ,Recall results for this architecture --- train_precision--0.9887 ,tra
 •Inferences suggest that model predictions can be improved by oversampling using image augmentations or including more images from other data sources.
 •Also compared my predictions with model predictions for few classes out of 28.
 •Explored CNNs and also tried few CNN models without using any state of the art models architectures.')
-
+ON CONFLICT ON CONSTRAINT unique_role_start DO NOTHING;
 
 INSERT INTO connections(sender_id,receiver_id,status)
 VALUES
 ((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT user_id FROM users WHERE signup_email = 'khushboochoudhary@gmail.com' ),'accepted'),
 ((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT user_id FROM users WHERE signup_email = 'shivikal@gmail.com' ),'accepted'),
-((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT user_id FROM users WHERE signup_email = 'kanchanrajput@gmail.com' ),'accepted');
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),(SELECT user_id FROM users WHERE signup_email = 'kanchanrajput@gmail.com' ),'accepted')
 ON CONFLICT(sender_id,receiver_id) DO NOTHING ;
 
 
@@ -143,12 +147,13 @@ AND content like '%deep interest in black hole mergers%'
 ))
 ON CONFLICT (user_id,post_id) DO NOTHING ;
 
-INSERT INTO commentss(user_id,post_id,content)
+INSERT INTO commentss(user_id,post_id,content,created_at)
 VALUES
 ((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),
 (SELECT post_id FROM posts WHERE user_id=(SELECT user_id FROM users WHERE signup_email = 'khushboochoudhary@gmail.com' )
 AND created_at BETWEEN '2024-11-19 14:58:00' AND '2024-11-19 14:59:00'
 AND content like '%my colleagues at Synchrony%'
 ),
-'Amazing!! 🤍Congrats Bro!!⚡')
+'Amazing!! 🤍Congrats Bro!!⚡',
+'2024-11-20 14:58:00')
 ON CONFLICT (user_id,created_at) DO NOTHING ;
