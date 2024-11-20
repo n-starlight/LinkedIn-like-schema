@@ -1,14 +1,13 @@
+--Schema and initial data insertion seeding follows idempotency 
 --To ensure no errors of unique constraint violations AND no nuplicate data insertions while running the script again and again
---during initial stage of populating tables with some data ----> 
----> have used ON CONFLICT(unique_field) DO NOTHING
----> and fetched ids for foreign key references dynamically except for posts and comments .
 
 INSERT INTO users(name,last_name,headline,summary,signup_email)
 VALUES
 ('Nisha','.','.',NULL,'nysssachoudhary@gmail.com'),
-('Khushboo','Choudhary',NULL,NULL,'khushboochoudhary@gmail.com'),
-('Shivika', 'Lamba',NULL,NULL,'shivikal@gmail.com'),
-('Kanchan','Rajput','Software Enginner II @ Parker Digital',NULL,'kanchanrajput@gmail.com');
+('Khushboo','Choudhary','ML Engineer',NULL,'khushboochoudhary@gmail.com'),
+('Shivika', 'L.','.',NULL,'shivikal@gmail.com'),
+('Kanchan','Rajput','Software Enginner II @ Parker Digital',NULL,'kanchanrajput@gmail.com')
+ON CONFLICT (signup_email) DO NOTHING;
 
 
 INSERT INTO education(user_id,school,degree,field_of_study,start_date,end_date,grade,activities)
@@ -87,7 +86,17 @@ WHERE status ='accepted'
 ON CONFLICT(follower_id,followed_id) DO NOTHING ;
 
 
-INSERT INTO posts (user_id,content)
+
+-- 1) created at should be current timestamp in real cases with real interactions 
+-- but to not add a new post evry time the script is run using static tiem here,
+-- also if we directly want to use post_id can do 
+-- 2) insert one post and then populate likes/comments for that post, insert another post and populate likes for that 
+-- while returning on post_id 
+
+-- 3) created_at will be same for all queries if whole script is run at once.
+-- 4) But we can keep it default as it's not required here.
+
+INSERT INTO posts (user_id,content,created_at)
 VALUES
 ((SELECT user_id FROM users WHERE signup_email = 'khushboochoudhary@gmail.com' ),'I''m thrilled to share that I have successfully completed my summer internship at Synchrony as a Machine Learning Intern!
 
@@ -97,7 +106,8 @@ A highlight of my internship was emerging as one of the top 3 finalists in the B
 
 None of this would have been possible without the unwavering support of my colleagues at Synchrony. I''m especially grateful to my assignment leader, Lian Wang and my mentor, Joe Lotti for their guidance. A special shoutout to Karin Dor Markovich for her continued support throughout my journey and making it an equally enjoyable experience.
 
-I''m also excited to share that I''ll be continuing with Synchrony as a Co-op Intern this fall. I’m looking forward to even more learning and new experiences ahead!'),
+I''m also excited to share that I''ll be continuing with Synchrony as a Co-op Intern this fall. I’m looking forward to even more learning and new experiences ahead!',
+'2024-11-19 14:58:00'),
 ((SELECT user_id FROM users WHERE signup_email = 'shivikal@gmail.com' ),
 'I''m thrilled to share that I''ve completed my MSc in Astrophysics from Cardiff University (awaiting thesis results). My MSc thesis, titled "Evolution of Binary Black Hole in the Presence of a Supermassive Black Hole", explores the dynamics of hierarchical triple systems and how supermassive black holes influence binary black hole mergers.
 
@@ -115,13 +125,30 @@ My hands-on experience includes:
 
 With a deep interest in black hole mergers, triple systems, N-body simulations, I’m now looking to pursue a PhD and contribute to cutting-edge research.
 If anyone has advice, tips, or guidance on PhD applications (particularly in black hole physics, gravitational waves, or related fields), or knows of opportunities in this area, I''d greatly appreciate your input!
-Thank you in advance for your support and insights!'
-)
+Thank you in advance for your support and insights!',
+'2024-11-19 15:02:00')
+ON CONFLICT ON CONSTRAINT unique_post_time DO NOTHING;
+
 
 INSERT INTO likes(user_id,post_id)
-VALUES(1,1),
-(1,2)
+VALUES((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),
+(SELECT post_id FROM posts WHERE user_id=(SELECT user_id FROM users WHERE signup_email = 'khushboochoudhary@gmail.com')
+AND created_at BETWEEN '2024-11-19 14:58:00' AND '2024-11-19 14:59:00'
+AND content like '%my colleagues at Synchrony%'
+)),
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),
+(SELECT post_id FROM posts WHERE user_id=(SELECT user_id FROM users WHERE signup_email = 'shivikal@gmail.com')
+AND created_at BETWEEN '2024-11-19 15:00:00' AND '2024-11-19 15:02:00'
+AND content like '%deep interest in black hole mergers%'
+))
+ON CONFLICT (user_id,post_id) DO NOTHING ;
 
 INSERT INTO commentss(user_id,post_id,content)
 VALUES
-(1,1,'Amazing!! 🤍Congrats Bro!!⚡')
+((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),
+(SELECT post_id FROM posts WHERE user_id=(SELECT user_id FROM users WHERE signup_email = 'khushboochoudhary@gmail.com' )
+AND created_at BETWEEN '2024-11-19 14:58:00' AND '2024-11-19 14:59:00'
+AND content like '%my colleagues at Synchrony%'
+),
+'Amazing!! 🤍Congrats Bro!!⚡')
+ON CONFLICT (user_id,created_at) DO NOTHING ;

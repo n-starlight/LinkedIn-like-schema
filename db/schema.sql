@@ -1,8 +1,9 @@
----All the ALTER commands are executed before data insertion
+---All the ALTER commands are executed before data insertion(later just modified the tables not using alter commands)
 ---Haven't use ON CASCADE DELETE FOR posts as they will be deleted before user_deletion in batches in backend logic .
 
+--Schema and initial data insertion seeding follows idempotency 
 --To ensure no errors of unique constraint violations AND no nuplicate data insertions while running the script again and again
---that is to ensure idempotency .
+
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users(
@@ -161,6 +162,12 @@ ALTER TABLE experiences
 ADD CONSTRAINT unique_user_company UNIQUE(user_id,company_id);
 ALTER TABLE likes
 ADD CONSTRAINT unique_post_userlike UNIQUE(user_id,post_id);
+
+
+ALTER TABLE posts
+ADD CONSTRAINT unique_post_time UNIQUE(user_id,created_at);
+ALTER TABLE commentss
+ADD CONSTRAINT unique_comment_time UNIQUE(user_id,created_at);
 
 ---- creating indexes on foreign keys
 CREATE INDEX IF NOT EXISTS idx_education_user_id ON education(user_id);
