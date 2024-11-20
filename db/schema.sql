@@ -206,6 +206,7 @@ ADD CONSTRAINT unique_user_company UNIQUE(user_id, company_id);
 ALTER TABLE likes
 ADD CONSTRAINT unique_post_userlike UNIQUE(user_id, post_id);
 
+-- For Test Environments: Enforce idempotency to avoid duplicates
 ALTER TABLE posts
 ADD CONSTRAINT unique_post_time UNIQUE(user_id, created_at);
 
