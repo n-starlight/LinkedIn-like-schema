@@ -66,7 +66,6 @@ deleted_at TIMESTAMP DEFAULT NULL --NULL means account is active
 -- ADD COLUMN last_name VARCHAR(100) NOT NULL ;
 
 
--- DROP TABLE IF EXISTS education;
 CREATE TABLE education(
 education_id BIGSERIAL PRIMARY KEY,
 user_id BIGINT NOT NULL,
@@ -82,8 +81,6 @@ FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE
 -- degree can be null usually
 
 
-
--- DROP TABLE IF EXISTS contact_info;
 CREATE TABLE contact_info(
 contact_id BIGSERIAL PRIMARY KEY,
 user_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
@@ -107,7 +104,7 @@ website VARCHAR(100)
 -- ALTER COLUMN category DROP NOT NULL ;
 -- didn't use this table later , modified the later one with skill name.
 
--- DROP TABLE IF EXISTS user_skills;
+
 CREATE TABLE user_skills(
 user_skill_id BIGSERIAL PRIMARY KEY,
 user_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
@@ -116,14 +113,14 @@ endorsements INT DEFAULT 0,
 skill_order INT 
 );
 
--- DROP TABLE IF EXISTS companies;
+
 CREATE TABLE companies(
 comp_id BIGSERIAL PRIMARY KEY,
 comp_name VARCHAR(250) NOT NULL UNIQUE,
 comp_location VARCHAR(100)
 );
 
--- DROP TABLE IF EXISTS experiences;
+
 CREATE TABLE experiences(
 experience_id BIGSERIAL PRIMARY KEY,
 user_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
@@ -134,7 +131,7 @@ company_id BIGINT NOT NULL REFERENCES companies(comp_id) ON DELETE CASCADE
 DROP TYPE IF EXISTS role_location;
 CREATE TYPE role_location AS ENUM ('Office', 'Remote', 'Hybrid');
 
--- DROP TABLE IF EXISTS positions;
+
 CREATE TABLE positions(
 position_id SERIAL PRIMARY KEY,
 experience_id BIGINT NOT NULL REFERENCES experiences(experience_id) ON DELETE CASCADE,
@@ -150,7 +147,7 @@ end_date DATE
 DROP TYPE IF EXISTS conn_status;
 CREATE TYPE conn_status AS ENUM ('accepted','pending','withdrawn','rejected');
 
--- DROP TABLE IF EXISTS connections;
+
 CREATE TABLE connections(
 connection_id BIGSERIAL PRIMARY KEY,
 sender_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
@@ -160,7 +157,7 @@ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- DROP TABLE IF EXISTS follows;
+
 CREATE TABLE follows (
 follows_id BIGSERIAL PRIMARY KEY,
 follower_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
@@ -171,7 +168,7 @@ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 -- for follows will add in backend logic to add connections by default
 -- until they have not unfollowed 
 
--- DROP TABLE IF EXISTS posts;
+
 CREATE TABLE posts (
 post_id BIGSERIAL PRIMARY KEY,
 user_id BIGINT NOT NULL REFERENCES users(user_id),
@@ -179,7 +176,7 @@ content TEXT,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- DROP TABLE IF EXISTS commentss;
+
 CREATE TABLE commentss (
 comment_id BIGSERIAL PRIMARY KEY,
 user_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
@@ -188,7 +185,7 @@ content TEXT,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- DROP TABLE IF EXISTS likes;
+
 CREATE TABLE likes (
 like_id BIGSERIAL PRIMARY KEY,
 user_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
