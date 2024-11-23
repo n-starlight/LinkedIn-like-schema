@@ -18,7 +18,7 @@ Athletics(Long Distance & Sprint Running, Long and high Jumps, Hurdles Running, 
 Gully Football, Gully Cricket'),
 ((SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' ),'Birla Balika Vidyapeeth, Pilani','12th Grade(BSV)(CBSE)','Physics, Mathematics, Chemistry',
 '2014-06-01','2015-05-30','94%',NULL)
-ON CONFLICT ON CONSTRAINT unique_school_degree DO NOTHING ;
+ON CONFLICT ON CONSTRAINT unique_user_school_degree DO NOTHING ;
 
 INSERT INTO contact_info(user_id,email,phone_no,address,website)
 VALUES
@@ -53,12 +53,15 @@ ON CONFLICT(user_id,company_id) DO NOTHING ;
 
 INSERT INTO positions(experience_id,role,role_location,start_date,end_date,role_desc)
 VALUES
-((SELECT experience_id FROM experiences WHERE company_id=(SELECT comp_id FROM companies WHERE comp_name = 'Polymerize') ),
+((SELECT experience_id FROM experiences WHERE company_id=(SELECT comp_id FROM companies WHERE comp_name = 'Polymerize') 
+AND user_id=(SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' )),
 'Frontend Engineer','Remote','2022-09-01','2022-09-16',
 'Couldnt continue due to family concerns and health issues'),
-((SELECT experience_id FROM experiences WHERE company_id=(SELECT comp_id FROM companies WHERE comp_name = 'Amazon')),
+((SELECT experience_id FROM experiences WHERE company_id=(SELECT comp_id FROM companies WHERE comp_name = 'Amazon')
+AND user_id=(SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' )),
 'Logistics Associate','Remote','2023-10-01','2024-08-30',NULL),
-((SELECT experience_id FROM experiences WHERE company_id=(SELECT comp_id FROM companies WHERE comp_name = 'Spartificial')),
+((SELECT experience_id FROM experiences WHERE company_id=(SELECT comp_id FROM companies WHERE comp_name = 'Spartificial')
+AND user_id=(SELECT user_id FROM users WHERE signup_email = 'nysssachoudhary@gmail.com' )),
 'ML Intern','Remote','2023-08-01','2022-10-10',
 '•Supervised Multilabel,multi class image  classification of different protein locations using images of different morphology cells with the location of protein relative to cellular structure per sample on human protein atlas dataset.
 •Improved model performance metrics like precision, recall etc. by exploring and selecting good data augmentation .Train recall improved  by approx 12% and precision by approx 3.5% ,validation precision by 2.3%, recall by approx 2.4%. 
@@ -68,7 +71,7 @@ Precision ,Recall results for this architecture --- train_precision--0.9887 ,tra
 •Inferences suggest that model predictions can be improved by oversampling using image augmentations or including more images from other data sources.
 •Also compared my predictions with model predictions for few classes out of 28.
 •Explored CNNs and also tried few CNN models without using any state of the art models architectures.')
-ON CONFLICT ON CONSTRAINT unique_role_start DO NOTHING;
+ON CONFLICT ON CONSTRAINT unique_user_role_start DO NOTHING;
 
 INSERT INTO connections(sender_id,receiver_id,status)
 VALUES

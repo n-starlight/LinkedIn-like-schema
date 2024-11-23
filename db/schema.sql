@@ -4,37 +4,39 @@
 --Creating Schema and initial data insertion  follows idempotency 
 --To ensure no errors of unique constraint violations AND no nuplicate data insertions while running the script again and again
 
-ALTER TABLE connections
-DROP CONSTRAINT IF EXISTS unique_sender_receiver;
-ALTER TABLE follows
-DROP CONSTRAINT IF EXISTS unique_follower_followed;
-ALTER TABLE experiences
-DROP CONSTRAINT IF EXISTS unique_user_company;
-ALTER TABLE likes
-DROP CONSTRAINT IF EXISTS unique_post_userlike;
-ALTER TABLE posts
-DROP CONSTRAINT IF EXISTS unique_post_time;
-ALTER TABLE commentss
-DROP CONSTRAINT IF EXISTS unique_comment_time;
+--not necessary/required to drop constraints
+-- ALTER TABLE connections
+-- DROP CONSTRAINT IF EXISTS unique_sender_receiver;
+-- ALTER TABLE follows
+-- DROP CONSTRAINT IF EXISTS unique_follower_followed;
+-- ALTER TABLE experiences
+-- DROP CONSTRAINT IF EXISTS unique_user_company;
+-- ALTER TABLE likes
+-- DROP CONSTRAINT IF EXISTS unique_post_userlike;
+-- ALTER TABLE posts
+-- DROP CONSTRAINT IF EXISTS unique_post_time;
+-- ALTER TABLE commentss
+-- DROP CONSTRAINT IF EXISTS unique_comment_time;
 
-ALTER TABLE education DROP CONSTRAINT IF EXISTS education_user_id_fkey;
-ALTER TABLE contact_info DROP CONSTRAINT IF EXISTS contact_info_user_id_fkey;
-ALTER TABLE user_skills DROP CONSTRAINT IF EXISTS user_skills_user_id_fkey;
-ALTER TABLE experiences DROP CONSTRAINT IF EXISTS experiences_user_id_fkey;
-ALTER TABLE experiences DROP CONSTRAINT IF EXISTS experiences_company_id_fkey;
-ALTER TABLE positions DROP CONSTRAINT IF EXISTS positions_experience_id_fkey;
-ALTER TABLE connections DROP CONSTRAINT IF EXISTS connections_sender_id_fkey;
-ALTER TABLE connections DROP CONSTRAINT IF EXISTS connections_receiver_id_fkey;
-ALTER TABLE follows DROP CONSTRAINT IF EXISTS follows_follower_id_fkey;
-ALTER TABLE follows DROP CONSTRAINT IF EXISTS follows_followed_id_fkey;
-ALTER TABLE posts DROP CONSTRAINT IF EXISTS posts_user_id_fkey;
-ALTER TABLE commentss DROP CONSTRAINT IF EXISTS commentss_user_id_fkey;
-ALTER TABLE commentss DROP CONSTRAINT IF EXISTS commentss_post_id_fkey;
-ALTER TABLE likes DROP CONSTRAINT IF EXISTS likes_user_id_fkey;
-ALTER TABLE likes DROP CONSTRAINT IF EXISTS likes_post_id_fkey;
-ALTER TABLE education DROP CONSTRAINT IF EXISTS unique_school_degree; 
-ALTER TABLE positions DROP CONSTRAINT IF EXISTS unique_role_start;
+-- ALTER TABLE education DROP CONSTRAINT IF EXISTS education_user_id_fkey;
+-- ALTER TABLE contact_info DROP CONSTRAINT IF EXISTS contact_info_user_id_fkey;
+-- ALTER TABLE user_skills DROP CONSTRAINT IF EXISTS user_skills_user_id_fkey;
+-- ALTER TABLE experiences DROP CONSTRAINT IF EXISTS experiences_user_id_fkey;
+-- ALTER TABLE experiences DROP CONSTRAINT IF EXISTS experiences_company_id_fkey;
+-- ALTER TABLE positions DROP CONSTRAINT IF EXISTS positions_experience_id_fkey;
+-- ALTER TABLE connections DROP CONSTRAINT IF EXISTS connections_sender_id_fkey;
+-- ALTER TABLE connections DROP CONSTRAINT IF EXISTS connections_receiver_id_fkey;
+-- ALTER TABLE follows DROP CONSTRAINT IF EXISTS follows_follower_id_fkey;
+-- ALTER TABLE follows DROP CONSTRAINT IF EXISTS follows_followed_id_fkey;
+-- ALTER TABLE posts DROP CONSTRAINT IF EXISTS posts_user_id_fkey;
+-- ALTER TABLE commentss DROP CONSTRAINT IF EXISTS commentss_user_id_fkey;
+-- ALTER TABLE commentss DROP CONSTRAINT IF EXISTS commentss_post_id_fkey;
+-- ALTER TABLE likes DROP CONSTRAINT IF EXISTS likes_user_id_fkey;
+-- ALTER TABLE likes DROP CONSTRAINT IF EXISTS likes_post_id_fkey;
+-- ALTER TABLE education DROP CONSTRAINT IF EXISTS unique_user_school_degree; 
+-- ALTER TABLE positions DROP CONSTRAINT IF EXISTS unique_user_role_start;
 
+--delete child tables before parent tables
 DROP TABLE IF EXISTS education;
 DROP TABLE IF EXISTS contact_info;
 DROP TABLE IF EXISTS user_skills;
@@ -43,9 +45,9 @@ DROP TABLE IF EXISTS experiences;
 DROP TABLE IF EXISTS companies;
 DROP TABLE IF EXISTS connections;
 DROP TABLE IF EXISTS follows;
-DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS commentss;
 DROP TABLE IF EXISTS likes;
+DROP TABLE IF EXISTS posts;
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users(
@@ -214,10 +216,10 @@ ALTER TABLE commentss
 ADD CONSTRAINT unique_comment_time UNIQUE(user_id, created_at);
 
 ALTER TABLE education
-ADD CONSTRAINT unique_school_degree UNIQUE(school, degree);
+ADD CONSTRAINT unique_user_school_degree UNIQUE(user_id,school, degree);
 
 ALTER TABLE positions
-ADD CONSTRAINT unique_role_start UNIQUE(role, start_date);
+ADD CONSTRAINT unique_user_role_start UNIQUE(experience_id,role, start_date);
 
 ---- creating indexes on foreign keys
 CREATE INDEX IF NOT EXISTS idx_education_user_id ON education(user_id);
