@@ -1,2 +1,2 @@
 
-![linkedin_schema](https://github.com/user-attachments/assets/f19e7d45-8790-42b1-886a-1d6fd7a2cb17)
+![linkedin_schemaa](https://github.com/user-attachments/assets/9189c0a3-a813-4791-9ee6-1aa9f560185f)
